@@ -36,7 +36,7 @@ services:
   wireguard:
     build: ./wireguard
     environment:
-      - PUBLIC_IP=185.255.96.6
+      - PUBLIC_IP=1.2.3.4
       - PORT=55555
       - DNS=8.8.8.8
     volumes:
