@@ -1,3 +1,7 @@
+![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/denisix/wireguard?style=flat-square)
+![Docker Cloud Automated build](https://img.shields.io/docker/cloud/automated/denisix/wireguard?style=flat-square)
+![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/denisix/wireguard?style=flat-square)
+
 # Wireguard VPN
 Easy setup of Wireguard VPN server using docker engine
 
@@ -17,7 +21,11 @@ sudo apt install wireguard-tools
 ### Setup
 * manual run
 ```sh
-docker run --rm --cap-add sys_module --cap-add net_admin -v ./wireguard:/etc/wireguard -p 55555:55555/udp denisix/wireguard
+docker run --rm \
+  --cap-add sys_module \
+  --cap-add net_admin \
+  -v ./wireguard:/etc/wireguard \
+  -p 55555:55555/udp denisix/wireguard
 ```
 
 * sample **docker-compose.yml** file in case you want to run using [docker-compose](https://docs.docker.com/compose/install/) tool:
@@ -55,3 +63,7 @@ docker-compose logs wireguard
 
 
 as well as simple copy-paste instructions to setup your Ubuntu desktop as wireguard VPN client :)
+
+
+
+> p.s. please give a star if you like it :wink:
