@@ -62,6 +62,10 @@ you will find **QR code** to setup your mobile client in the docker container lo
 docker-compose logs wireguard
 ```
 
+* adding **new client** peer is easy:
+```sh
+docker-compose exec wireguard addclient client1
+```
 
 as well as simple copy-paste instructions to setup your Ubuntu desktop as wireguard VPN client :)
 
