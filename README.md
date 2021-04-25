@@ -1,6 +1,7 @@
 ![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/denisix/wireguard?style=flat-square)
 ![Docker Cloud Automated build](https://img.shields.io/docker/cloud/automated/denisix/wireguard?style=flat-square)
 ![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/denisix/wireguard?style=flat-square)
+![Docker Pulls](https://img.shields.io/docker/pulls/denisix/wireguard?style=flat-square)
 
 # Wireguard VPN
 Easy setup of Wireguard VPN server using docker engine
