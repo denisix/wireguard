@@ -35,7 +35,7 @@ version: "3"
 services:
 
   wireguard:
-    build: ./wireguard
+    image: denisix/wireguard
     environment:
       - PUBLIC_IP=1.2.3.4
       - PORT=55555
