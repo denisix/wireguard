@@ -14,7 +14,7 @@ ENV DNS="1.1.1.1, 1.0.0.1"
 
 # tools
 WORKDIR /srv
-COPY start addclient /srv/
+COPY start restart addclient /srv/
 RUN chmod 755 /srv/*
 
 ENV PATH="/srv:${PATH}"
