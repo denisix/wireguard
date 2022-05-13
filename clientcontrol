@@ -1,0 +1,46 @@
+#!/bin/sh
+
+print_usage() {
+  printf "Usage: script -u (unrevoke) <clientname> OR script -r (revoke) <clientname>"
+}
+
+restart() {
+    touch /etc/wireguard/restart
+    sleep 1
+    rm /etc/wireguard/restart
+}
+
+revoke() {
+    NAME=$1
+    if [ -e "/etc/wireguard/clients/$NAME.pub" ]; then
+        mv /etc/wireguard/clients/$NAME.pub /etc/wireguard/clients/$NAME-REV.pub
+        restart
+    else
+        printf "$NAME have not been created yet"
+        exit 1
+    fi
+}
+
+unrevoke() {
+    NAME=$1
+    if [ -e "/etc/wireguard/clients/$NAME-REV.pub" ]; then
+        mv /etc/wireguard/clients/$NAME-REV.pub /etc/wireguard/clients/$NAME.pub
+        restart
+    elif [ -e "/etc/wireguard/clients/$NAME.pub" ]; then
+        printf "$NAME have not been revoked yet"
+        exit 1
+    else
+        printf "$NAME have not been created yet"
+        exit 1
+    fi
+}
+
+while getopts 'u:r:' flag; do
+  case "${flag}" in
+    u) unrevoke ${OPTARG} ;;
+    r) revoke ${OPTARG} ;;
+    *) print_usage
+       exit 1 ;;
+  esac
+done
+

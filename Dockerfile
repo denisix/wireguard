@@ -12,9 +12,13 @@ ENV PUBLIC_IP=1.2.3.4
 # custom dns servers
 ENV DNS="1.1.1.1, 1.0.0.1"
 
+# Use unsafe (744) permissions in /etc/wireguard/clients
+ARG CONFS_DIR_UNSAFE_PERMISSIONS=0
+ENV WG_CLIENTS_UNSAFE_PERMISSIONS $WG_CLIENTS_UNSAFE_PERMISSIONS
+
 # tools
 WORKDIR /srv
-COPY start restart addclient /srv/
+COPY start restart addclient clientcontrol /srv/
 RUN chmod 755 /srv/*
 
 ENV PATH="/srv:${PATH}"
@@ -29,3 +33,4 @@ RUN chmod 755 /srv/* \
 
 # entrypoint
 CMD [ "start" ]
+

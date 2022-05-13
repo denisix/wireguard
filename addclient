@@ -58,3 +58,9 @@ echo "systemctl start wg-quick@wg0.service"
 echo
 qrencode -t ansiutf8 < /etc/wireguard/clients/$NAME.conf
 
+if [ "$WG_CLIENTS_UNSAFE_PERMISSIONS" -eq 1 ]
+then
+	chmod -R go+r /etc/wireguard/clients
+	chmod go+r /etc/wireguard/clients/$NAME.conf
+fi
+
