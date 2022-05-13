@@ -16,6 +16,9 @@ ENV DNS="1.1.1.1, 1.0.0.1"
 ARG CONFS_DIR_UNSAFE_PERMISSIONS=0
 ENV WG_CLIENTS_UNSAFE_PERMISSIONS $WG_CLIENTS_UNSAFE_PERMISSIONS
 
+# Turn off clientcontrol logs
+ENV CLIENTCONTROL_NO_LOGS=0
+
 # tools
 WORKDIR /srv
 COPY start restart addclient clientcontrol /srv/

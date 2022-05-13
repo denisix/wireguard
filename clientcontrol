@@ -16,8 +16,11 @@ revoke() {
         mv /etc/wireguard/clients/$NAME.pub /etc/wireguard/clients/$NAME-REV.pub
         restart
     else
-        printf "$NAME have not been created yet"
-        exit 1
+	if [ "$CLIENTCONTROL_NO_LOGS" -eq 0 ]
+	then
+        	printf "$NAME has not been created yet"
+        	exit 1
+	fi
     fi
 }
 
@@ -27,11 +30,17 @@ unrevoke() {
         mv /etc/wireguard/clients/$NAME-REV.pub /etc/wireguard/clients/$NAME.pub
         restart
     elif [ -e "/etc/wireguard/clients/$NAME.pub" ]; then
-        printf "$NAME have not been revoked yet"
-        exit 1
+        if [ "$CLIENTCONTROL_NO_LOGS" -eq 0 ]
+	then
+		printf "$NAME has not been revoked yet"
+        	exit 1
+	fi
     else
-        printf "$NAME have not been created yet"
-        exit 1
+        if [ "$CLIENTCONTROL_NO_LOGS" -eq 0 ]
+	then
+		printf "$NAME has not been created yet"
+        	exit 1
+	fi
     fi
 }
 
