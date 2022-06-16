@@ -15,7 +15,7 @@ then
 	SERV_KEY=`cat /etc/wireguard/wg0.key`
 	cat > /etc/wireguard/wg0.conf << EOF
 [Interface]
-Address = 192.168.10.1/24
+Address = $SUBNET_IP
 ListenPort = $PORT
 PrivateKey = $SERV_KEY
 PostUp = iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE; iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1400; iptables -t mangle -A POSTROUTING -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1400

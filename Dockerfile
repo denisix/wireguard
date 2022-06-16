@@ -12,6 +12,15 @@ ENV PUBLIC_IP=1.2.3.4
 # custom dns servers
 ENV DNS="1.1.1.1, 1.0.0.1"
 
+# your private subnet without dynamic part
+ENV SUBNET=10.88
+
+# your private subnet prefix
+ENV SUBNET_PREFIX=16
+
+# fist IP in private subnet
+ENV SUBNET_IP=10.88.0.1/16
+
 # tools
 WORKDIR /srv
 COPY start addclient /srv/
