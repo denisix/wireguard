@@ -12,29 +12,29 @@ fi
 
 if [ ! -e "/etc/wireguard/clients/$NAME.pub" ]
 then
-    wg genkey | tee /etc/wireguard/clients/$NAME.key | wg pubkey > /etc/wireguard/clients/$NAME.pub
+    wg genkey | tee /etc/wireguard/clients/"$NAME".key | wg pubkey > /etc/wireguard/clients/"$NAME".pub
 
-    SERV_PUB=`cat /etc/wireguard/wg0.pub`
-    CLIENT_KEY=`cat /etc/wireguard/clients/$NAME.key`
+    SERV_PUB=$(cat /etc/wireguard/wg0.pub)
+    CLIENT_KEY=$(cat /etc/wireguard/clients/"$NAME".key)
 
     [ -e /etc/wireguard/clients.num ] || echo 2 > /etc/wireguard/clients.num
-    N=`cat /etc/wireguard/clients.num`
+    N=$(cat /etc/wireguard/clients.num)
     N_READ=$N
     # get public ip
     if [ "$PUBLIC_IP" = "1.2.3.4" ]
     then
-        PUBLIC_IP=`curl -s ifconfig.co`
+        PUBLIC_IP=$(curl -s ifconfig.co)
         export PUBLIC_IP
     fi
 
     # Create client's address
-    C=$(($N/254))
+    C=$((N/254))
     if [ "$C" -gt 0 ]
     then
-        N=$(($N%254+1))
+        N=$((N%254+1))
     fi
     # Create config
-    cat > /etc/wireguard/clients/$NAME.conf << EOF
+    cat > /etc/wireguard/clients/"$NAME".conf << EOF
 [Interface]
 PrivateKey = $CLIENT_KEY
 Address = 10.88.$C.$N/16
@@ -45,22 +45,22 @@ PublicKey = $SERV_PUB
 AllowedIPs = 0.0.0.0/0
 Endpoint = $PUBLIC_IP:$PORT
 EOF
-    chmod go-rw /etc/wireguard/clients/$NAME.key /etc/wireguard/clients/$NAME.conf
+    chmod go-rw /etc/wireguard/clients/"$NAME".key /etc/wireguard/clients/"$NAME".conf
     echo $((N_READ+1)) > /etc/wireguard/clients.num
 fi
 
 echo
 echo "Client \"$NAME\" config, you can create using following cmds:"
 echo "cat > /etc/wireguard/wg0.conf << EOF"
-cat /etc/wireguard/clients/$NAME.conf
+cat /etc/wireguard/clients/"$NAME".conf
 echo "EOF"
 echo "systemctl enable wg-quick@wg0.service"
 echo "systemctl start wg-quick@wg0.service"
 echo
-qrencode -t ansiutf8 < /etc/wireguard/clients/$NAME.conf
+qrencode -t ansiutf8 < /etc/wireguard/clients/"$NAME".conf
 
 if [ "$WG_CLIENTS_UNSAFE_PERMISSIONS" -eq 1 ]
 then
     chmod -R go+r /etc/wireguard/clients
-    chmod go+r /etc/wireguard/clients/$NAME.conf
+    chmod go+r /etc/wireguard/clients/"$NAME".conf
 fi
