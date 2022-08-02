@@ -1,6 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 touch /etc/wireguard/restart
 #sleep 1
 rm /etc/wireguard/restart
-

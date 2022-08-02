@@ -1,19 +1,19 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# get public ip
+# Get public IP
 if [ "$PUBLIC_IP" = "1.2.3.4" ]
 then
-	PUBLIC_IP=`curl -s ifconfig.co`
-	export PUBLIC_IP
+    PUBLIC_IP=`curl -s ifconfig.co`
+    export PUBLIC_IP
 fi
 
-# initialize if not exists
+# Initialize first key if it doesn't exist
 if [ ! -e /etc/wireguard/wg*.conf ]
-then 
-	echo "$(date): wireguard init config - /etc/wireguard/wg0.conf"
-	wg genkey | tee /etc/wireguard/wg0.key | wg pubkey > /etc/wireguard/wg0.pub
-	SERV_KEY=`cat /etc/wireguard/wg0.key`
-	cat > /etc/wireguard/wg0.conf << EOF
+then
+    echo "$(date): wireguard init config - /etc/wireguard/wg0.conf"
+    wg genkey | tee /etc/wireguard/wg0.key | wg pubkey > /etc/wireguard/wg0.pub
+    SERV_KEY=`cat /etc/wireguard/wg0.key`
+    cat > /etc/wireguard/wg0.conf << EOF
 [Interface]
 Address = 10.88.0.1/16
 ListenPort = $PORT
@@ -21,31 +21,31 @@ PrivateKey = $SERV_KEY
 PostUp = iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE; iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1400; iptables -t mangle -A POSTROUTING -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1400
 PostDown = iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE; iptables -D FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1400; iptables -t mangle -D POSTROUTING -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1400
 EOF
-	chmod go-rw /etc/wireguard/wg0.key /etc/wireguard/wg0.conf
+    chmod go-rw /etc/wireguard/wg0.key /etc/wireguard/wg0.conf
 fi
 
 wg_up() {
     for conf in /etc/wireguard/wg*.conf
-	do
+    do
         echo "$(date): wireguard up interface - $conf"
         wg-quick up $conf
     done
-	
-	# print test config on each docker start (useful for quick setup)
-	addclient test
 
-	for NAME in /etc/wireguard/clients/*.pub
-	do
-		PUB=`cat $NAME`
-		CONF=${NAME/pub/conf}
-		IP=`awk '/Address/{print $3}' $CONF|awk -F\/ '{print $1}'`
-		wg set wg0 peer $PUB allowed-ips $IP
-	done
+    # Print first configuration on each container start (useful for quick setup)
+    addclient test
+
+    for NAME in /etc/wireguard/clients/*.pub
+    do
+        PUB=`cat $NAME`
+        CONF=${NAME/pub/conf}
+        IP=`awk '/Address/{print $3}' $CONF|awk -F\/ '{print $1}'`
+        wg set wg0 peer $PUB allowed-ips $IP
+    done
 }
 
 wg_down() {
     for conf in /etc/wireguard/wg*.conf
-	do
+    do
         echo "$(date): wireguard down interface - $conf"
         wg-quick down $conf
     done
@@ -66,7 +66,6 @@ finish () {
     if [ $NAT -eq 1 ]; then
         iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
     fi
-
     exit 0
 }
 
@@ -74,6 +73,6 @@ trap finish TERM INT QUIT
 
 while inotifywait -e modify -e create /etc/wireguard
 do
-	wg_down
-	wg_up
+    wg_down
+    wg_up
 done
