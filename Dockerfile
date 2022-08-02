@@ -27,7 +27,8 @@ RUN chmod 755 /srv/*
 ENV PATH="/srv:${PATH}"
 VOLUME /etc/wireguard
 
-# Set up WireGuard
+# Install WireGuard and dependencies
+# hadolint ignore=DL3008
 RUN chmod 755 /srv/* \
     && echo "deb http://deb.debian.org/debian/ buster-backports main" > /etc/apt/sources.list.d/buster-backports.list \
     && apt-get update \
