@@ -29,10 +29,10 @@ VOLUME /etc/wireguard
 
 # Set up WireGuard
 RUN chmod 755 /srv/* \
-	&& echo "deb http://deb.debian.org/debian/ buster-backports main" > /etc/apt/sources.list.d/buster-backports.list \
-	&& apt-get update \
-	&& apt-get install -y --no-install-recommends wireguard-tools iptables inotify-tools net-tools qrencode openresolv procps curl \
-	&& apt-get clean all
+    && echo "deb http://deb.debian.org/debian/ buster-backports main" > /etc/apt/sources.list.d/buster-backports.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends wireguard-tools iptables inotify-tools net-tools qrencode openresolv procps curl \
+    && apt-get clean all
 
 # Entrypoint
 CMD [ "start" ]
