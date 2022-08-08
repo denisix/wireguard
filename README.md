@@ -4,23 +4,26 @@
 ![Docker Pulls](https://img.shields.io/docker/pulls/denisix/wireguard?style=flat-square)
 
 # Wireguard VPN
-Easy setup of Wireguard VPN server using docker engine
 
-Do you need Wireguard VPN for your private use?
-A lot of documentations provides different options to setup Wireguard VPN, this one should be easy to get it running in minutes!
+Easy Wireguard server setup using Docker Engine
 
 Information related to Wireguard VPN you can find at official website - [https://www.wireguard.com/](https://www.wireguard.com/)
 
-### Requirements:
-- linux host with recent kernel 5.x
-- wireguard module installed using
+## Requirements
+
+- GNU/Linux host with a recent kernel (5.x)
+- Wireguard module installed using
+
 ```sh
 sudo apt install wireguard-tools
 ```
-- installed [docker](https://docs.docker.com/engine/install/) engine
 
-### Setup
-* manual run
+- installed [Docker](https://docs.docker.com/engine/install/) Engine
+
+## Setup
+
+- manual run
+
 ```sh
 docker run --rm \
   --cap-add sys_module \
@@ -31,10 +34,12 @@ docker run --rm \
 	-e SUBNET=10.88 \
 	-e SUBNET_PREFIX=16 \
 	-e SUBNET_IP=10.88.0.1/16 \
+  -v ./wireguard:/etc/wireguard \
   -p 55555:55555/udp denisix/wireguard
 ```
 
-* sample **docker-compose.yml** file in case you want to run using [docker-compose](https://docs.docker.com/compose/install/) tool:
+- Sample **[docker-compose](https://docs.docker.com/compose/install/).yml** file:
+
 ```docker-compose.yml
 version: "3"
 services:
@@ -58,25 +63,24 @@ services:
     restart: unless-stopped
 ```
 
+To start your instance:
 
-and after startup
 ```sh
 docker-compose up -d wireguard
 ```
 
+There will be a **QR code** within the container's logs for the test user:
 
-you will find **QR code** to setup your mobile client in the docker container logs:
 ```sh
 docker-compose logs wireguard
 ```
 
-as well as simple copy-paste instructions to setup your Ubuntu desktop as wireguard VPN client :)
+...as well as simple copy-paste instructions for your desktop clients :)
 
+Adding a **new client** peer is easy:
 
-adding **new client** peer is easy:
 ```sh
 docker-compose exec wireguard addclient client1
 ```
 
-
-> p.s. please give a star if you like it :wink:
+> P.S.: Please give this repo a star if you like it :wink:

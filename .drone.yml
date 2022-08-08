@@ -1,0 +1,18 @@
+---
+kind: pipeline
+type: docker
+name: default
+
+steps:
+  - name: lint
+    image: osshelp/drone-linter
+  - name: docker-build
+    image: plugins/docker
+    pull: never
+    settings:
+      repo: denisix/wireguard
+      tags: latest
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
