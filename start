@@ -18,8 +18,8 @@ then
 Address = $SUBNET_IP
 ListenPort = $PORT
 PrivateKey = $SERV_KEY
-PostUp = iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE; iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1400; iptables -t mangle -A POSTROUTING -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1400
-PostDown = iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE; iptables -D FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1400; iptables -t mangle -D POSTROUTING -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1400
+PostUp = iptables -t nat -A POSTROUTING -o $INTERFACE -j MASQUERADE; iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1400; iptables -t mangle -A POSTROUTING -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1400
+PostDown = iptables -t nat -D POSTROUTING -o $INTERFACE -j MASQUERADE; iptables -D FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1400; iptables -t mangle -D POSTROUTING -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1400
 EOF
     chmod go-rw /etc/wireguard/wg0.key /etc/wireguard/wg0.conf
 fi
@@ -56,7 +56,7 @@ wg_up
 if [ "$NAT" -eq 1 ]
 then
     echo "$(date): setup NAT"
-    iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+    iptables -t nat -A POSTROUTING -o "$INTERFACE" -j MASQUERADE
 fi
 
 # Handle shutdown behavior
@@ -64,7 +64,7 @@ finish () {
     echo "$(date): stopping wireguard"
     wg_down
     if [ "$NAT" -eq 1 ]; then
-        iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
+        iptables -t nat -D POSTROUTING -o "$INTERFACE" -j MASQUERADE
     fi
     exit 0
 }

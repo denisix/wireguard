@@ -3,6 +3,9 @@ FROM debian:buster
 # Should we use NAT for our clients? - Yes, by default
 ENV NAT=1
 
+# Default ethernet interface
+ENV INTERFACE=eth0
+
 # Default port
 ENV PORT=55555
 
