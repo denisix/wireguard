@@ -1,0 +1,20 @@
+version: "3"
+services:
+
+  wireguard:
+    image: denisix/wireguard
+    environment:
+      - PUBLIC_IP=1.2.3.4
+      - PORT=55555
+      - DNS=8.8.8.8
+      - SUBNET=10.88
+      - SUBNET_PREFIX=16
+      - SUBNET_IP=10.88.0.1/16
+    volumes:
+      - ./wireguard/:/etc/wireguard/
+    ports:
+      - 55555:55555/udp
+    cap_add:
+      - SYS_MODULE
+      - NET_ADMIN
+    restart: unless-stopped
