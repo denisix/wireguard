@@ -28,12 +28,12 @@ sudo apt install wireguard-tools
 docker run --rm \
   --cap-add sys_module \
   --cap-add net_admin \
-	-e PUBLIC_IP=1.2.3.4 \
-	-e PORT=55555 \
-	-e DNS=8.8.8.8 \
-	-e SUBNET=10.88 \
-	-e SUBNET_PREFIX=16 \
-	-e SUBNET_IP=10.88.0.1/16 \
+  -e PUBLIC_IP=1.2.3.4 \
+  -e PORT=55555 \
+  -e DNS=8.8.8.8 \
+  -e SUBNET=10.88 \
+  -e SUBNET_PREFIX=16 \
+  -e SUBNET_IP=10.88.0.1/16 \
   -v ./wireguard:/etc/wireguard \
   -p 55555:55555/udp denisix/wireguard
 ```
@@ -50,9 +50,9 @@ services:
       - PUBLIC_IP=1.2.3.4
       - PORT=55555
       - DNS=8.8.8.8
-			- SUBNET=10.88
-			- SUBNET_PREFIX=16
-			- SUBNET_IP=10.88.0.1/16
+      - SUBNET=10.88
+      - SUBNET_PREFIX=16
+      - SUBNET_IP=10.88.0.1/16
     volumes:
       - ./wireguard/:/etc/wireguard/
     ports:
