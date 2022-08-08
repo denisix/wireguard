@@ -38,7 +38,7 @@ docker run --rm \
   -p 55555:55555/udp denisix/wireguard
 ```
 
-- Sample **[docker-compose](https://docs.docker.com/compose/install/).yml** file:
+- Sample **[docker-compose.yml](https://raw.githubusercontent.com/denisix/wireguard/main/docker-compose.yml)** file:
 
 ```docker-compose.yml
 version: "3"
