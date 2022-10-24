@@ -1,4 +1,3 @@
-![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/denisix/wireguard?style=flat-square)
 ![Docker Cloud Automated build](https://img.shields.io/docker/cloud/automated/denisix/wireguard?style=flat-square)
 ![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/denisix/wireguard?style=flat-square)
 ![Docker Pulls](https://img.shields.io/docker/pulls/denisix/wireguard?style=flat-square)
@@ -83,4 +82,4 @@ Adding a **new client** peer is easy:
 docker-compose exec wireguard addclient client1
 ```
 
-> P.S.: Please give this repo a star if you like it :wink:
+> P.S.: Please give [this repo](https://github.com/denisix/wireguard) a star if you like it :wink:
