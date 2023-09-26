@@ -1,4 +1,4 @@
-FROM debian:buster-slim
+FROM alpine:3.18
 LABEL description="Wireguard VPN" org.opencontainers.image.authors="github.com/denisix"
 
 MAINTAINER denisix <denisix@gmail.com>
@@ -27,9 +27,7 @@ ENV \
   WG_CLIENTS_UNSAFE_PERMISSIONS=0 \
   PATH="/srv:$PATH"
 
-ARG DEBIAN_FRONTEND=noninteractive
 VOLUME /etc/wireguard
-EXPOSE 55555/udp
 
 # Copy tools
 WORKDIR /srv
@@ -38,11 +36,7 @@ COPY start restart addclient clientcontrol /srv/
 # Install WireGuard and dependencies
 # hadolint ignore=DL3008
 RUN chmod 755 /srv/* \
-    && echo "deb http://deb.debian.org/debian/ buster-backports main" > /etc/apt/sources.list.d/buster-backports.list \
-    && apt-get update \
-    && apt-get -qq install -y --no-install-recommends wireguard-tools iptables inotify-tools net-tools qrencode openresolv procps curl iproute2 \
-    && apt-get clean all \
-    && rm -rf /var/lib/apt/lists/*
+    && apk add --no-cache wireguard-tools iptables inotify-tools net-tools libqrencode openresolv procps curl iproute2
 
 HEALTHCHECK --interval=5s --timeout=5s CMD /sbin/ip -o li sh wg0 || exit 1
 
