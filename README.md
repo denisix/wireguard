@@ -10,7 +10,7 @@ Information related to Wireguard VPN you can find at official website - [https:/
 ## Requirements
 
 - GNU/Linux host with a recent kernel (5.x)
-- Wireguard module installed using
+- Wireguard module: in modern linux it's already exists, so verify by `modprobe wireguard`, if no module install using:
 
 ```sh
 sudo apt install wireguard-tools
@@ -28,9 +28,7 @@ docker run --rm \
   --cap-add net_admin \
   -e PUBLIC_IP=1.2.3.4 \
   -e PORT=55555 \
-  -e DNS=8.8.8.8 \
-  -e SUBNET=10.88 \
-  -e SUBNET_PREFIX=16 \
+  -e DNS=8.8.8.8,8.8.4.4 \
   -e SUBNET_IP=10.88.0.1/16 \
   -v ./wireguard:/etc/wireguard \
   -p 55555:55555/udp denisix/wireguard
@@ -47,9 +45,7 @@ services:
     environment:
       - PUBLIC_IP=1.2.3.4
       - PORT=55555
-      - DNS=8.8.8.8
-      - SUBNET=10.88
-      - SUBNET_PREFIX=16
+      - DNS=8.8.8.8,8.8.4.4
       - SUBNET_IP=10.88.0.1/16
     volumes:
       - ./wireguard/:/etc/wireguard/
@@ -80,5 +76,23 @@ Adding a **new client** peer is easy:
 ```sh
 docker-compose exec wireguard addclient client1
 ```
+
+Available environment variables:
+
+| VARIABLE                    | DESCRIPTION                                                                 |
+|-----------------------------|-----------------------------------------------------------------------------|
+| NAT=1                       | Should we use NAT for our clients? - Yes, by default                        |
+| INTERFACE=eth0              | Which interface to use?                                                     |
+| PORT=55555                  | Port to use for WireGuard                                                   |
+| PUBLIC_IP=1.2.3.4           | Server's public IP address                                                  |
+| DNS=1.1.1.1                 | Custom DNS servers                                                          |
+| SUBNET_IP=10.88.0.1/16      | First IP in private subnet (with subnet declaration), client IPs will follow like 10.88.0.2, 10.88.0.3, .. |
+| CLIENTCONTROL_NO_LOGS=0     | Turn off clientcontrol logs                                                 |
+| WG_CLIENTS_UNSAFE_PERMISSIONS=0 | Use unsafe (744) permissions in /etc/wireguard/clients                  |
+| TCPMSS=1400                 | Provide TCPMSS value so the connected clients can adjust their MTU          |
+
+Additionaly you can set custom post up / post down scripts to execute by overriding the following scripts in your docker-compose configuration:
+- /etc/wireguard/postup
+- /etc/wireguard/postdown
 
 > P.S.: Please give [this repo](https://github.com/denisix/wireguard) a star if you like it :wink:

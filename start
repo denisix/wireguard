@@ -7,6 +7,29 @@ then
     export PUBLIC_IP
 fi
 
+# postup script
+if [ ! -e /etc/wireguard/postup ]
+then
+  cat > /etc/wireguard/postup << EOF
+#!/bin/sh
+iptables -t nat -A POSTROUTING -o $INTERFACE -j MASQUERADE
+iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss $TCPMSS
+iptables -t mangle -A POSTROUTING -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss $TCPMSS
+EOF
+  chmod +x /etc/wireguard/postup
+fi
+# postup script
+if [ ! -e /etc/wireguard/postdown ]
+then
+  cat > /etc/wireguard/postdown << EOF
+#!/bin/sh
+iptables -t nat -D POSTROUTING -o $INTERFACE -j MASQUERADE
+iptables -D FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss $TCPMSS
+iptables -t mangle -D POSTROUTING -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss $TCPMSS
+EOF
+  chmod +x /etc/wireguard/postup
+fi
+
 # Initialize first key if it doesn't exist
 if [ ! -e /etc/wireguard/wg0.conf ]  # Was wg*.conf
 then
@@ -18,8 +41,8 @@ then
 Address = $SUBNET_IP
 ListenPort = $PORT
 PrivateKey = $SERV_KEY
-PostUp = iptables -t nat -A POSTROUTING -o $INTERFACE -j MASQUERADE; iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1400; iptables -t mangle -A POSTROUTING -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1400
-PostDown = iptables -t nat -D POSTROUTING -o $INTERFACE -j MASQUERADE; iptables -D FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1400; iptables -t mangle -D POSTROUTING -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1400
+PostUp = /etc/wireguard/postup
+PostDown = /etc/wireguard/postdown
 EOF
     chmod go-rw /etc/wireguard/wg0.key /etc/wireguard/wg0.conf
 fi

@@ -1,15 +1,16 @@
-version: "3"
 services:
 
   wireguard:
     image: denisix/wireguard
     environment:
-      - PUBLIC_IP=1.2.3.4
+      - NAT=1
+      - INTERFACE=eth0
       - PORT=55555
-      - DNS=8.8.8.8
-      - SUBNET=10.88
-      - SUBNET_PREFIX=16
+      - PUBLIC_IP=1.2.3.4
+      - DNS=8.8.8.8,8.8.4.4
       - SUBNET_IP=10.88.0.1/16
+      - CLIENTCONTROL_NO_LOGS=0
+      - WG_CLIENTS_UNSAFE_PERMISSIONS=0
     volumes:
       - ./wireguard/:/etc/wireguard/
     ports:
