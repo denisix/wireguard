@@ -67,8 +67,8 @@ DNS = $DNS
 
 [Peer]
 PublicKey = $SERV_PUB
-AllowedIPs = 0.0.0.0/0
 Endpoint = $PUBLIC_IP:$PORT
+# AllowedIPs = 10.0.0.0/8 # example of routed network behind client
 EOF
     chmod go-rw /etc/wireguard/clients/"$NAME".key /etc/wireguard/clients/"$NAME".conf
     echo $N > /etc/wireguard/clients.num
