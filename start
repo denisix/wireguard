@@ -62,6 +62,11 @@ wg_up() {
         PUB=$(cat "$NAME")
         CONF=${NAME/pub/conf}
         IP=$(awk '/Address/{print $3}' "$CONF"|awk -F/ '{print $1}')
+        ALLOW=$(awk '/AllowedIPs/{print $3}' "$CONF")
+        if [ "$ALLOW" != "" ]
+        then
+          IP="$IP,$ALLOW"
+        fi
         wg set wg0 peer "$PUB" allowed-ips "$IP"
     done
 }
