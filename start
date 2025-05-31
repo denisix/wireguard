@@ -1,16 +1,14 @@
 #!/usr/bin/env bash
 
 # Get public IP
-if [ "$PUBLIC_IP" = "1.2.3.4" ]
-then
-    PUBLIC_IP=$(curl -s ifconfig.co)
-    export PUBLIC_IP
+if [ "$PUBLIC_IP" = "1.2.3.4" ]; then
+  PUBLIC_IP=$(curl -s ifconfig.co)
+  export PUBLIC_IP
 fi
 
 # postup script
-if [ ! -e /etc/wireguard/postup ]
-then
-  cat > /etc/wireguard/postup << EOF
+if [ ! -e /etc/wireguard/postup ]; then
+  cat >/etc/wireguard/postup <<EOF
 #!/bin/sh
 iptables -t nat -A POSTROUTING -o $INTERFACE -j MASQUERADE
 iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss $TCPMSS
@@ -19,9 +17,8 @@ EOF
   chmod +x /etc/wireguard/postup
 fi
 # postup script
-if [ ! -e /etc/wireguard/postdown ]
-then
-  cat > /etc/wireguard/postdown << EOF
+if [ ! -e /etc/wireguard/postdown ]; then
+  cat >/etc/wireguard/postdown <<EOF
 #!/bin/sh
 iptables -t nat -D POSTROUTING -o $INTERFACE -j MASQUERADE
 iptables -D FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss $TCPMSS
@@ -31,12 +28,11 @@ EOF
 fi
 
 # Initialize first key if it doesn't exist
-if [ ! -e /etc/wireguard/wg0.conf ]  # Was wg*.conf
-then
-    echo "$(date): wireguard init config - /etc/wireguard/wg0.conf"
-    wg genkey | tee /etc/wireguard/wg0.key | wg pubkey > /etc/wireguard/wg0.pub
-    SERV_KEY=$(cat /etc/wireguard/wg0.key)
-    cat > /etc/wireguard/wg0.conf << EOF
+if [ ! -e /etc/wireguard/wg0.conf ]; then # Was wg*.conf
+  echo "$(date): wireguard init config - /etc/wireguard/wg0.conf"
+  wg genkey | tee /etc/wireguard/wg0.key | wg pubkey >/etc/wireguard/wg0.pub
+  SERV_KEY=$(cat /etc/wireguard/wg0.key)
+  cat >/etc/wireguard/wg0.conf <<EOF
 [Interface]
 Address = $SUBNET_IP
 ListenPort = $PORT
@@ -44,63 +40,57 @@ PrivateKey = $SERV_KEY
 PostUp = /etc/wireguard/postup
 PostDown = /etc/wireguard/postdown
 EOF
-    chmod go-rw /etc/wireguard/wg0.key /etc/wireguard/wg0.conf
+  chmod go-rw /etc/wireguard/wg0.key /etc/wireguard/wg0.conf
 fi
 
 wg_up() {
-    for conf in /etc/wireguard/wg*.conf
-    do
-        echo "$(date): wireguard up interface - $conf"
-        wg-quick up "$conf"
-    done
+  for conf in /etc/wireguard/wg*.conf; do
+    echo "$(date): wireguard up interface - $conf"
+    wg-quick up "$conf"
+  done
 
-    # Print first configuration on each container start (useful for quick setup)
-    addclient test
+  # Print first configuration on each container start (useful for quick setup)
+  addclient test
 
-    for NAME in /etc/wireguard/clients/*.pub
-    do
-        PUB=$(cat "$NAME")
-        CONF=${NAME/pub/conf}
-        IP=$(awk '/Address/{print $3}' "$CONF"|awk -F/ '{print $1}')
-        ALLOW=$(awk '/AllowedIPs/{print $3}' "$CONF")
-        if [ "$ALLOW" != "" ]
-        then
-          IP="$IP,$ALLOW"
-        fi
-        wg set wg0 peer "$PUB" allowed-ips "$IP"
-    done
+  for NAME in /etc/wireguard/clients/*.pub; do
+    PUB=$(cat "$NAME")
+    CONF=${NAME/pub/conf}
+    IP=$(awk '/Address/{print $3}' "$CONF" | awk -F/ '{print $1}')
+    ALLOW=$(awk '/^AllowedIPs/{print $3}' "$CONF")
+    if [ "$ALLOW" != "" ]; then
+      IP="$IP,$ALLOW"
+    fi
+    wg set wg0 peer "$PUB" allowed-ips "$IP"
+  done
 }
 
 wg_down() {
-    for conf in /etc/wireguard/wg*.conf
-    do
-        echo "$(date): wireguard down interface - $conf"
-        wg-quick down "$conf"
-    done
+  for conf in /etc/wireguard/wg*.conf; do
+    echo "$(date): wireguard down interface - $conf"
+    wg-quick down "$conf"
+  done
 }
 
 wg_up
 
-if [ "$NAT" -eq 1 ]
-then
-    echo "$(date): setup NAT"
-    iptables -t nat -A POSTROUTING -o "$INTERFACE" -j MASQUERADE
+if [ "$NAT" -eq 1 ]; then
+  echo "$(date): setup NAT"
+  iptables -t nat -A POSTROUTING -o "$INTERFACE" -j MASQUERADE
 fi
 
 # Handle shutdown behavior
-finish () {
-    echo "$(date): stopping wireguard"
-    wg_down
-    if [ "$NAT" -eq 1 ]; then
-        iptables -t nat -D POSTROUTING -o "$INTERFACE" -j MASQUERADE
-    fi
-    exit 0
+finish() {
+  echo "$(date): stopping wireguard"
+  wg_down
+  if [ "$NAT" -eq 1 ]; then
+    iptables -t nat -D POSTROUTING -o "$INTERFACE" -j MASQUERADE
+  fi
+  exit 0
 }
 
 trap finish TERM INT QUIT
 
-while inotifywait -e modify -e create /etc/wireguard
-do
-    wg_down
-    wg_up
+while inotifywait -e modify -e create /etc/wireguard; do
+  wg_down
+  wg_up
 done
