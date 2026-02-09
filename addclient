@@ -47,7 +47,7 @@ then
     # get public ip
     if [ -z "$PUBLIC_IP" ] || [ "$PUBLIC_IP" = "1.2.3.4" ]
     then
-        PUBLIC_IP=$(curl -s ifconfig.co)
+        PUBLIC_IP=$(wget -q -O - ifconfig.so)
         export PUBLIC_IP
     fi
 
@@ -64,10 +64,12 @@ then
 PrivateKey = $CLIENT_KEY
 Address = $IP_NEW/$SUBNET_PREFIX
 DNS = $DNS
+MTU = $MTU
 
 [Peer]
 PublicKey = $SERV_PUB
 Endpoint = $PUBLIC_IP:$PORT
+PersistentKeepalive = 25
 # AllowedIPs = 10.0.0.0/8 # example of routed network behind client
 EOF
     chmod go-rw /etc/wireguard/clients/"$NAME".key /etc/wireguard/clients/"$NAME".conf

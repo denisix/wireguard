@@ -2,7 +2,7 @@
 
 # Get public IP
 if [ "$PUBLIC_IP" = "1.2.3.4" ]; then
-  PUBLIC_IP=$(curl -s ifconfig.co)
+  PUBLIC_IP=$(wget -q -O - ifconfig.so)
   export PUBLIC_IP
 fi
 

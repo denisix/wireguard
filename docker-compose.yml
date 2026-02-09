@@ -11,6 +11,7 @@ services:
       - SUBNET_IP=10.88.0.1/16
       - CLIENTCONTROL_NO_LOGS=0
       - WG_CLIENTS_UNSAFE_PERMISSIONS=0
+      - MTU=1384
     volumes:
       - ./wireguard/:/etc/wireguard/
     ports:

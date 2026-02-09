@@ -1,4 +1,4 @@
-FROM alpine:3.20
+FROM alpine:3.23
 LABEL description="Wireguard VPN" org.opencontainers.image.authors="github.com/denisix" maintainer="denisix <denisix@gmail.com>"
 
 # ENVIRONMENT VARIABLES:
@@ -23,6 +23,7 @@ ENV \
   CLIENTCONTROL_NO_LOGS=0 \
   WG_CLIENTS_UNSAFE_PERMISSIONS=0 \
   TCPMSS=1400 \
+  MTU=1384 \
   PATH="/srv:$PATH"
 
 VOLUME /etc/wireguard
@@ -34,7 +35,7 @@ COPY start restart addclient clientcontrol /srv/
 # Install WireGuard and dependencies
 # hadolint ignore=DL3008
 RUN chmod 755 /srv/* \
-    && apk add --no-cache wireguard-tools iptables inotify-tools net-tools libqrencode-tools openresolv procps curl iproute2
+    && apk add --no-cache wireguard-tools iptables inotify-tools libqrencode-tools openresolv procps wget iproute2
 
 HEALTHCHECK --interval=5s --timeout=5s CMD /sbin/ip -o li sh wg0 || exit 1
 
