@@ -90,6 +90,7 @@ Available environment variables:
 | CLIENTCONTROL_NO_LOGS=0     | Turn off clientcontrol logs                                                 |
 | WG_CLIENTS_UNSAFE_PERMISSIONS=0 | Use unsafe (744) permissions in /etc/wireguard/clients                  |
 | TCPMSS=1400                 | Provide TCPMSS value so the connected clients can adjust their MTU          |
+| MTU=1384                    | Provide MTU value for client configs                                        |
 
 Additionaly you can set custom post up / post down scripts to execute by overriding the following scripts in your docker-compose configuration:
 - /etc/wireguard/postup
